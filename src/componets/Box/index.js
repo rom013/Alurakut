@@ -15,9 +15,11 @@ margin-bottom: 10px;
 }
 
 .title {
+    font-family: sans-serif;
     font-size: 32px;
     font-weight: 400;
     margin-bottom: 20px;
+    color: var(--textPrimaryColor); 
 }
 
 .subTitle {
@@ -60,6 +62,17 @@ button {
     color: #FFFFFF;
     border-radius: 10000px;
     background-color: #6F92BB;
+}
+.info{
+    font-family: Rubik;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 134.53%;
+    color: #999999;   
+}
+li{
+    list-style: none;
 }
 `//inicaiar com maiusculo, pois é um componente 
 
