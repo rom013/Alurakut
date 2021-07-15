@@ -33,6 +33,30 @@ function ProfileSidebar(propriedades){
   )
 }
 
+function ProfileRelationsBox(propriedades){
+  return(
+    <ProfileRelationsBoxWrapper>
+            <h2 className="smallTitle">
+              {propriedades.title} <span className="boxLink">({propriedades.itens.length})</span>
+            </h2>
+            <ul>
+              {/* {seguidores.map((itemAtual) => {
+                return (
+                  <li key={itemAtual}>
+                    <a href={`/users/${itemAtual}`}>
+                      <img src={`https://github.com/${itemAtual}.png`}/>
+                      <span>{itemAtual}</span>
+                    </a>
+                  </li>
+                )
+              })} */}
+            </ul>
+            <hr/>
+            <a href="#"class="boxLink">Ver todos</a>
+          </ProfileRelationsBoxWrapper>
+  )
+}
+
 export default function Home() {
   const perfilGitHub = 'rom013'
   const [comunidade, setComunidade] = React.useState([{
@@ -52,6 +76,20 @@ export default function Home() {
     'juunegreiros',
     'peas'
   ]
+  const [seguidores, setSeguidores] = React.useState([]);
+
+  React.useEffect(function(){
+    fetch('https://api.github.com/users/peas/followers')
+    .then(function(respostaDoServidor){
+      return respostaDoServidor.json()
+    })
+    .then(function(respostaCompleta){
+      setSeguidores(respostaCompleta)
+    })
+    //API GraphQL
+    fetch('')
+  }, [])
+
   return (
     <>
       <AlurakutMenu/>
@@ -68,6 +106,7 @@ export default function Home() {
             </p>
             <OrkutNostalgicIconSet/>
           </Box>
+
           <Box>
             <h2 className="subTitle">O que você deseja fazer?</h2>
             <form onSubmit={function handle(e){
@@ -112,6 +151,9 @@ export default function Home() {
         </div>
 
         <div className="profileRelationsArea" style={{ gridArea: "profileRelationsArea"}}>
+          
+          <ProfileRelationsBox title="Seguidores" itens={seguidores}/>
+          
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
               Meus amigos(as) <span className="boxLink">({pessoasFavoritas.length})</span>
