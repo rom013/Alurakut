@@ -59,11 +59,7 @@ function ProfileRelationsBox(propriedades){
 
 export default function Home() {
   const perfilGitHub = 'rom013'
-  const [comunidade, setComunidade] = React.useState([{
-    id: '6323262300598218222658',
-    title: 'Eu odeio acordar cedo',
-    image: 'https://img10.orkut.br.com/community/52cc4290facd7fa700b897d8a1dc80aa.jpg'
-  }])
+  const [comunidade, setComunidade] = React.useState([])
   // const indicaPosiçaoArray = comunidade[0]
   // const alteraArray = comunidade[1]
   // const comunidade = ['Alurakut']
@@ -79,15 +75,39 @@ export default function Home() {
   const [seguidores, setSeguidores] = React.useState([]);
 
   React.useEffect(function(){
-    fetch('https://api.github.com/users/peas/followers')
+    fetch('https://api.github.com/users/rafaballerini/following')
     .then(function(respostaDoServidor){
       return respostaDoServidor.json()
     })
     .then(function(respostaCompleta){
       setSeguidores(respostaCompleta)
     })
+    
     //API GraphQL
-    fetch('')
+    fetch('https://graphql.datocms.com', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'feab8203d76cd8b6a6c0375545f347',
+        'Content-Type' : 'application/json',
+        'Accept' : 'application/json',
+      },
+      body: JSON.stringify({ "query":`query{
+        allCommunities{
+          title
+          id
+          creatorSlug
+          imageUrl
+        }
+      }`})
+    })
+
+    .then((response) => response.json())
+    .then((respostaCompleta) => {
+      const comunidadesDato = respostaCompleta.data.allCommunities
+      console.log(comunidadesDato)
+      setComunidade(comunidadesDato)
+    })
+
   }, [])
 
   return (
@@ -97,8 +117,8 @@ export default function Home() {
         <div className="profileArea" style={{ gridArea: "profileArea"}}>  
           <ProfileSidebar perfilGitHub={perfilGitHub}/>
         </div> 
-        <div className="welcomeArea" style={{ gridArea: "welcomeArea"}}>
-          <Box>
+        <div className="welcomeArea"  style={{ gridArea: "welcomeArea"}}>
+          <Box style={{borderRadius: `0px 50px 0px 0px;`}}>
             <h1 className="title">Bem vindo(a), Rômullo</h1>
             <p className="info">
               <span style={{ fontWeight: 'bold'}}>Sorte de hoje: </span>
@@ -109,20 +129,33 @@ export default function Home() {
 
           <Box>
             <h2 className="subTitle">O que você deseja fazer?</h2>
+            
             <form onSubmit={function handle(e){
               e.preventDefault()
 
               const dadosForm = new FormData(e.target)
 
               const comuni = {
-                image: dadosForm.get('image'),
+                imageUrl: dadosForm.get('image'),
                 title: dadosForm.get('title'),
-                id: new Date().toISOString,
+                creatorSlug: perfilGitHub
               }
 
-              const comunidadeAtualizada = [...comunidade, comuni]
-
-              setComunidade(comunidadeAtualizada)
+              fetch('/api/comunidades', {
+                method: 'POST',
+                headers: {
+                  'Content-Type' : 'application/json'
+                },
+                body: JSON.stringify(comuni)
+              })
+              .then(async (response) => {
+                const dados = await response.json()
+                
+                console.log(dados.registroCriado)
+                const comuni = dados.registroCriado 
+                const comunidadeAtualizada = [...comunidade, comuni]
+                setComunidade(comunidadeAtualizada)
+              })
 
               // comunidade.push('novo')
               console.log(comunidade)
@@ -183,8 +216,8 @@ export default function Home() {
               {comunidade.map((itemAtual) => {
                 return (
                   <li key={itemAtual.id}>
-                    <a href={`/users/${itemAtual.title}`}>
-                      <img src={itemAtual.image}/>
+                    <a href={`/users/${itemAtual.id}`}>
+                      <img src={itemAtual.imageUrl}/>
                       <span>{itemAtual.title}</span>
                     </a>
                   </li>
