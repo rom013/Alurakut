@@ -118,7 +118,7 @@ export default function Home() {
           <ProfileSidebar perfilGitHub={perfilGitHub}/>
         </div> 
         <div className="welcomeArea"  style={{ gridArea: "welcomeArea"}}>
-          <Box style={{borderRadius: `0px 50px 0px 0px;`}}>
+          <Box style={{borderRadius: `8px 50px 8px 8px;`}}>
             <h1 className="title">Bem vindo(a), Rômullo</h1>
             <p className="info">
               <span style={{ fontWeight: 'bold'}}>Sorte de hoje: </span>
