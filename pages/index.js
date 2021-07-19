@@ -3,6 +3,8 @@ import MainGrid from '../src/componets/mainGrid'
 import Box from '../src/componets/Box'
 import {AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet} from '../src/lib/AluraKutCommons'
 import { ProfileRelationsBoxWrapper } from '../src/componets/profileRelationsArea'
+import nookies from 'nookies'
+import jwt from 'jsonwebtoken'
 
 function ProfileSidebar(propriedades){
   console.log(propriedades)
@@ -37,7 +39,8 @@ function ProfileRelationsBox(propriedades){
   return(
     <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
-              {propriedades.title} <span className="boxLink">({propriedades.itens.length})</span>
+              Seguidores <span className="boxLink">({propriedades.followers.length})</span><br/><br/>
+              Seguindo <span className="boxLink">({propriedades.following.length})</span>
             </h2>
             <ul>
               {/* {seguidores.map((itemAtual) => {
@@ -57,14 +60,14 @@ function ProfileRelationsBox(propriedades){
   )
 }
 
-export default function Home() {
-  const perfilGitHub = 'rom013'
+export default function Home(props) {
+  const perfilGitHub = props.githubUser
   const [comunidade, setComunidade] = React.useState([])
   // const indicaPosiçaoArray = comunidade[0]
   // const alteraArray = comunidade[1]
   // const comunidade = ['Alurakut']
 
-
+  
   const pessoasFavoritas = [
     'marcobrunodev',
     'rafaballerini',
@@ -72,10 +75,23 @@ export default function Home() {
     'juunegreiros',
     'peas'
   ]
+
+  
+  const [seguindo, setSeguindo] = React.useState([]);
+
+  React.useEffect(function(){
+    fetch(`https://api.github.com/users/${perfilGitHub}/following`)
+    .then(function(respostaDoServidor){
+      return respostaDoServidor.json()
+    })
+    .then(function(respostaCompleta){
+      setSeguindo(respostaCompleta)
+    })}, [])
+
   const [seguidores, setSeguidores] = React.useState([]);
 
   React.useEffect(function(){
-    fetch('https://api.github.com/users/rafaballerini/following')
+    fetch(`https://api.github.com/users/${perfilGitHub}/followers`)
     .then(function(respostaDoServidor){
       return respostaDoServidor.json()
     })
@@ -112,14 +128,14 @@ export default function Home() {
 
   return (
     <>
-      <AlurakutMenu/>
+      <AlurakutMenu githubUser={perfilGitHub}/>
       <MainGrid>
         <div className="profileArea" style={{ gridArea: "profileArea"}}>  
           <ProfileSidebar perfilGitHub={perfilGitHub}/>
         </div> 
         <div className="welcomeArea"  style={{ gridArea: "welcomeArea"}}>
           <Box style={{borderRadius: `8px 50px 8px 8px;`}}>
-            <h1 className="title">Bem vindo(a), Rômullo</h1>
+            <h1 className="title">Bem vindo(a), {perfilGitHub}</h1>
             <p className="info">
               <span style={{ fontWeight: 'bold'}}>Sorte de hoje: </span>
               Não somos seres humanos vivendo uma experiência espiritual, somos seres espirituais vivendo uma experiência humana. Wayne W. Dyer
@@ -185,7 +201,7 @@ export default function Home() {
 
         <div className="profileRelationsArea" style={{ gridArea: "profileRelationsArea"}}>
           
-          <ProfileRelationsBox title="Seguidores" itens={seguidores}/>
+          <ProfileRelationsBox /*title="Seguidores"*/ followers={seguidores} following={seguindo}/>
           
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
@@ -233,3 +249,37 @@ export default function Home() {
     </>
   )
 }
+
+export async function getServerSideProps(context) {
+  const cookies = nookies.get(context)
+  const token = cookies.USER_TOKEN
+  const { githubUser } = jwt.decode(token)
+  // console.log("Decode token", jwt.decode(token))
+
+  // console.log("dad", nookies.get(context).USER_TOKEN)
+
+  const { isAuthenticated } = await fetch("https://alurakut-theta-orcin.vercel.app/api/auth", {
+    headers: {
+      Authorization: token,
+    },
+  })
+  .then((resposta) => resposta.json())
+  
+  console.log("ta ok? ", isAuthenticated)
+
+  if (!isAuthenticated){
+    return{
+      redirect: {
+        destination: '/login',
+        permanet: false,
+      },
+    }
+  }
+
+  return {
+    props: {
+      githubUser
+    }, // will be passed to the page component as props
+  }
+}
+
