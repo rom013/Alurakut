@@ -18,17 +18,6 @@ function ProfileSidebar(propriedades){
           @{propriedades.perfilGitHub}
         </a>
       </p>
-      <ul>
-        <li className="info">
-          masculino
-        </li>
-        <li className="info">
-          solteiro(a)
-        </li>
-        <li className="info">
-          Brasil
-        </li>
-      </ul>
       <hr/>
       <AlurakutProfileSidebarMenuDefault/>
     </Box>
@@ -187,8 +176,8 @@ export default function Home(props) {
               <div>
                 <input
                 name= "image"
-                placeholder= "Insira uma URL para colocarmos como capa"
-                aria-label= "Insira uma URL para colocarmos como capa"
+                placeholder= "Insira uma URL para usarmos como capa"
+                aria-label= "Insira uma URL para usarmos como capa"
                 type= "text"
                 />
               </div>
@@ -207,6 +196,7 @@ export default function Home(props) {
             <h2 className="smallTitle">
               Meus amigos(as) <span className="boxLink">({pessoasFavoritas.length})</span>
             </h2>
+            <hr/>
             <ul>
               {pessoasFavoritas.map((itemAtual) => {
                 return (
@@ -228,6 +218,7 @@ export default function Home(props) {
             <h2 className="smallTitle">
               Minhas comunidades <span className="boxLink">({comunidade.length})</span>
             </h2>
+            <hr/>
             <ul>
               {comunidade.map((itemAtual) => {
                 return (
