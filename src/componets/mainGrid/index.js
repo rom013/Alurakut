@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+
 const MainGrid = styled.main
 `
   width: 100%;
@@ -11,6 +12,7 @@ const MainGrid = styled.main
     display: none;
     @media(min-width: 860px) {
       display: block;
+      overflow: none
     }
   }
   @media(min-width: 860px) {
@@ -18,7 +20,7 @@ const MainGrid = styled.main
     display: grid;
     grid-template-areas: 
       "profileArea welcomeArea profileRelationsArea";
-    grid-template-columns: 160px 1fr 312px;
+    grid-template-columns: 160px 1fr 328px;
   }
 `
 export default MainGrid

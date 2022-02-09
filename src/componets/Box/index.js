@@ -8,7 +8,7 @@ padding: 16px;
 margin-bottom: 10px;
 
 .boxLink {
-    font-size: 14px;
+    font-size: 1rem;
     color: #2E7BB4;
     text-decoration: none;
     font-weight: 800;
@@ -18,7 +18,7 @@ margin-bottom: 10px;
     font-family: sans-serif;
     font-size: 32px;
     font-weight: 400;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
     color: var(--textPrimaryColor); 
 }
 
@@ -29,10 +29,9 @@ margin-bottom: 10px;
 }
 
 .smallTitle {
-    font-size: 16px;
+    font-size: .7rem;
     font-weight: 700;
-    color: #333333;
-   
+    color: #999;
 }
 
 hr {
@@ -59,7 +58,7 @@ button {
     border: 0;
     padding: 8px 12px;
     color: #FFFFFF;
-    border-radius: 10000px;
+    border-radius: 8px;
     background-color: #6F92BB;
 }
 .info{
@@ -73,6 +72,16 @@ button {
 li{
     list-style: none;
 }
+.container{
+    display: flex;
+    justify-content: space-between;
+    margin: 24px 24px;
+    flex-direction: column
+}
+.perfil{
+media (min-width: 860px) {
+    display: none;
+}}
 `//inicaiar com maiusculo, pois é um componente 
 
 export default Box

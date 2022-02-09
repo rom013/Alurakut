@@ -1,277 +1,102 @@
 import React from 'react'
-import MainGrid from '../src/componets/mainGrid'
-import Box from '../src/componets/Box'
-import {AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet} from '../src/lib/AluraKutCommons'
-import { ProfileRelationsBoxWrapper } from '../src/componets/profileRelationsArea'
-import nookies from 'nookies'
-import jwt from 'jsonwebtoken'
+import { useRouter } from 'next/router' //Permitir o uso do rotiamento 
+import { Helmet } from "react-helmet";
 
-function ProfileSidebar(propriedades){
-  console.log(propriedades)
-  return(
-    <Box>
-      <img src={`https://github.com/${propriedades.perfilGitHub}.png`} style={{ borderRadius: '8px'}}/> 
-      {/*colocar "/" para fechar as tags*/}
-      <hr/>
-      <p>
-        <a className="boxLink" href={`https://github.com/${propriedades.perfilGitHub}`}>
-          @{propriedades.perfilGitHub}
-        </a>
-      </p>
-      <hr/>
-      <AlurakutProfileSidebarMenuDefault/>
-    </Box>
-  )
-}
+//Hook do next JS
+import nookies from 'nookies' //biblioteca de cookies do node.js
 
-function ProfileRelationsBox(propriedades){
-  return(
-    <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">
-              Seguidores <span className="boxLink">({propriedades.followers.length})</span><br/><br/>
-              Seguindo <span className="boxLink">({propriedades.following.length})</span>
-            </h2>
-            <ul>
-              {/* {seguidores.map((itemAtual) => {
-                return (
-                  <li key={itemAtual}>
-                    <a href={`/users/${itemAtual}`}>
-                      <img src={`https://github.com/${itemAtual}.png`}/>
-                      <span>{itemAtual}</span>
-                    </a>
-                  </li>
-                )
-              })} */}
-            </ul>
-            <hr/>
-            <a href="#"class="boxLink">Ver todos</a>
-          </ProfileRelationsBoxWrapper>
-  )
-}
+export default function LoginScreen() {
+  const router = useRouter()
+  const [userGithub, setUserGithub] = React.useState('')
 
-export default function Home(props) {
-  const perfilGitHub = props.githubUser
-  const [comunidade, setComunidade] = React.useState([])
-  // const indicaPosiçaoArray = comunidade[0]
-  // const alteraArray = comunidade[1]
-  // const comunidade = ['Alurakut']
 
-  
-  const pessoasFavoritas = [
-    'marcobrunodev',
-    'rafaballerini',
-    'omariosouto',
-    'juunegreiros',
-    'peas'
-  ]
+  const red = "red 2px solid"
+  const blue = "border: blue 2px solid"
 
-  
-  const [seguindo, setSeguindo] = React.useState([]);
-
-  React.useEffect(function(){
-    fetch(`https://api.github.com/users/${perfilGitHub}/following`)
-    .then(function(respostaDoServidor){
-      return respostaDoServidor.json()
-    })
-    .then(function(respostaCompleta){
-      setSeguindo(respostaCompleta)
-    })}, [])
-
-  const [seguidores, setSeguidores] = React.useState([]);
-
-  React.useEffect(function(){
-    fetch(`https://api.github.com/users/${perfilGitHub}/followers`)
-    .then(function(respostaDoServidor){
-      return respostaDoServidor.json()
-    })
-    .then(function(respostaCompleta){
-      setSeguidores(respostaCompleta)
-    })
-    
-    //API GraphQL
-    fetch('https://graphql.datocms.com', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'feab8203d76cd8b6a6c0375545f347',
-        'Content-Type' : 'application/json',
-        'Accept' : 'application/json',
-      },
-      body: JSON.stringify({ "query":`query{
-        allCommunities{
-          title
-          id
-          creatorSlug
-          imageUrl
-        }
-      }`})
-    })
-
-    .then((response) => response.json())
-    .then((respostaCompleta) => {
-      const comunidadesDato = respostaCompleta.data.allCommunities
-      console.log(comunidadesDato)
-      setComunidade(comunidadesDato)
-    })
-
-  }, [])
-
+  const githubLength = userGithub.length
   return (
     <>
-      <AlurakutMenu githubUser={perfilGitHub}/>
-      <MainGrid>
-        <div className="profileArea" style={{ gridArea: "profileArea"}}>  
-          <ProfileSidebar perfilGitHub={perfilGitHub}/>
-        </div> 
-        <div className="welcomeArea"  style={{ gridArea: "welcomeArea"}}>
-          <Box style={{borderRadius: `8px 50px 8px 8px;`}}>
-            <h1 className="title">Bem vindo(a), {perfilGitHub}</h1>
-            <p className="info">
-              <span style={{ fontWeight: 'bold'}}>Sorte de hoje: </span>
-              Não somos seres humanos vivendo uma experiência espiritual, somos seres espirituais vivendo uma experiência humana. Wayne W. Dyer
-            </p>
-            <OrkutNostalgicIconSet/>
-          </Box>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>{`AluraKut`}</title>
+        <link rel="shortcut icon" href="https://cdn.discordapp.com/attachments/691421631700271114/935320323379843192/logo-alura.png" />
+      </Helmet>
+      <main style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <div className="loginScreen">
+          <section className="logoArea">
+            <img src="https://alurakut.vercel.app/logo.svg" />
 
-          <Box>
-            <h2 className="subTitle">O que você deseja fazer?</h2>
-            
-            <form onSubmit={function handle(e){
-              e.preventDefault()
+            <p><strong>Conecte-se</strong> aos seus amigos e familiares usando recados e mensagens instantâneas</p>
+            <p><strong>Conheça</strong> novas pessoas através de amigos de seus amigos e comunidades</p>
+            <p><strong>Compartilhe</strong> seus vídeos, fotos e paixões em um só lugar</p>
+          </section>
 
-              const dadosForm = new FormData(e.target)
+          <section className="formArea">
+            <form className="box" onSubmit={(infosDoEvento) => {
+              infosDoEvento.preventDefault()
+              console.log(infosDoEvento)
 
-              const comuni = {
-                imageUrl: dadosForm.get('image'),
-                title: dadosForm.get('title'),
-                creatorSlug: perfilGitHub
-              }
-
-              fetch('/api/comunidades', {
+              fetch('https://alurakut.vercel.app/api/login', {
                 method: 'POST',
                 headers: {
-                  'Content-Type' : 'application/json'
+                  'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(comuni)
+                body: JSON.stringify({ githubUser: userGithub })
               })
-              .then(async (response) => {
-                const dados = await response.json()
-                
-                console.log(dados.registroCriado)
-                const comuni = dados.registroCriado 
-                const comunidadeAtualizada = [...comunidade, comuni]
-                setComunidade(comunidadeAtualizada)
-              })
-
-              // comunidade.push('novo')
-              console.log(comunidade)
+                .then(async (respostaDoServidor) => {
+                  const dadosDaResposta = (await respostaDoServidor.json())
+                  const token = dadosDaResposta.token
+                  nookies.set(null, 'USER_TOKEN', token, {
+                    path: '/',
+                    maxAge: 86400 * 7,
+                  })
+                  router.push(`/main?username=${userGithub}`)
+                })
             }}>
-              <div>
-                <input
-                name= "title"
-                placeholder= "Qual vai ser o nome da sua comunidade?"
-                aria-label= "Qual vai ser o nome da sua comunidade?"
-                type= "text"
-                />
-              </div>
-              <div>
-                <input
-                name= "image"
-                placeholder= "Insira uma URL para usarmos como capa"
-                aria-label= "Insira uma URL para usarmos como capa"
-                type= "text"
-                />
-              </div>
-              <button>
-                Criar comunidade
+              <p>
+                Acesse agora mesmo com seu usuário do <strong>GitHub</strong>!
+              </p>
+              <input
+                placeholder="Usuário"
+                value={userGithub}
+                onChange={(infosDoEvento) => {
+                  setUserGithub(infosDoEvento.target.value)
+                }}
+                style={userGithub.length === 0 ? {border: red}: {border: "#000"}}
+              />
+
+              {userGithub.length === 0 //ternario
+                ? (
+                  'Campo de usuario vazio'
+                ) // false
+                : '' //true
+              }
+              <button 
+                type="submit"
+              >
+                Login
               </button>
             </form>
-          </Box>
-        </div>
 
-        <div className="profileRelationsArea" style={{ gridArea: "profileRelationsArea"}}>
-          
-          <ProfileRelationsBox /*title="Seguidores"*/ followers={seguidores} following={seguindo}/>
-          
-          <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">
-              Meus amigos(as) <span className="boxLink">({pessoasFavoritas.length})</span>
-            </h2>
-            <hr/>
-            <ul>
-              {pessoasFavoritas.map((itemAtual) => {
-                return (
-                  <li key={itemAtual}>
-                    <a href={`/users/${itemAtual}`}>
-                      <img src={`https://github.com/${itemAtual}.png`}/>
-                      <span>{itemAtual}</span>
-                    </a>
-                  </li>
-                )
-              })}
-            </ul>
-            <hr/>
-            <a href="#"class="boxLink">Ver todos</a>
-          </ProfileRelationsBoxWrapper>
+            <footer className="box">
+              <p>
+                Ainda não é membro? <br />
+                <a href="https://github.com">
+                  <strong>
+                    ENTRAR JÁ
+                  </strong>
+                </a>
+              </p>
+            </footer>
+          </section>
 
-          <Box>
-          <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">
-              Minhas comunidades <span className="boxLink">({comunidade.length})</span>
-            </h2>
-            <hr/>
-            <ul>
-              {comunidade.map((itemAtual) => {
-                return (
-                  <li key={itemAtual.id}>
-                    <a href={`/users/${itemAtual.id}`}>
-                      <img src={itemAtual.imageUrl}/>
-                      <span>{itemAtual.title}</span>
-                    </a>
-                  </li>
-                )
-              })}
-            </ul>
-            <hr/>
-            <a href="#"class="boxLink">Ver todos</a>
-          </ProfileRelationsBoxWrapper>
-          </Box>
+          <footer className="footerArea">
+            <p>
+              © 2021 alura.com.br - <a href="/">Sobre o Orkut.br</a> - <a href="/">Centro de segurança</a> - <a href="/">Privacidade</a> - <a href="/">Termos</a> - <a href="/">Contato</a>
+            </p>
+          </footer>
         </div>
-      </MainGrid>
+      </main>
     </>
   )
 }
-
-/*export async function getServerSideProps(context) {
-  const cookies = nookies.get(context)
-  const token = cookies.USER_TOKEN
-  const { githubUser } = jwt.decode(token)
-  // console.log("Decode token", jwt.decode(token))
-
-  // console.log("dad", nookies.get(context).USER_TOKEN)
-
-  const { isAuthenticated } = await fetch("https://alurakut-theta-orcin.vercel.app/api/auth", {
-    headers: {
-      Authorization: token,
-    },
-  })
-  .then((resposta) => resposta.json())
-  
-  console.log("ta ok? ", isAuthenticated)
-
-  if (!isAuthenticated){
-    return{
-      redirect: {
-        destination: '/login',
-        permanet: false,
-      },
-    }
-  }
-
-  return {
-    props: {
-      githubUser
-    }, // will be passed to the page component as props
-  }
-}
-
-*/
