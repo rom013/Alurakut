@@ -1,9 +1,20 @@
 import styled from 'styled-components'
 
-const Box = styled.div `
+const Box = styled.div`
 background: #FFFFFF;
 border-radius: 8px;
 padding: 16px;
+
+.li:nth-child(even) {background: #D9E6F6;}
+.li:nth-child(odd) {background: var(--backgroundQuarternary)}
+.li{
+    
+    min-height: 34px;
+    padding: 9px 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
 /* CSS Pré-Pronto */
 margin-bottom: 10px;
 

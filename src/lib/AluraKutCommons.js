@@ -27,7 +27,7 @@ export function AlurakutMenu({ githubUser }) {
         <AlurakutMenu.Logo src={`${BASE_URL}/logo.svg`} />
 
         <nav style={{ flex: 1 }}>
-          {[{ name: 'Inicio', slug: `/main?username=${githubUser}`}, {name: 'Perfil', slug: '/perfil'}, {name: 'Página de recados', slug: '/pgrecados'}, {name: 'Amigos', slug: `/friends?username=${githubUser}`}, {name: 'Comunidades', slug: `/community?username=${githubUser}`}].map((menuItem) => (
+          {[{ name: 'Inicio', slug: `/main?username=${githubUser}`}, {name: 'Perfil', slug: `/perfil?username=${githubUser}`}, {name: 'Página de recados', slug: '/pgrecados'}, {name: 'Amigos', slug: `/friends?username=${githubUser}`}, {name: 'Comunidades', slug: `/community?username=${githubUser}`}].map((menuItem) => (
             <Link key={`key__${menuItem.name.toLocaleLowerCase()}`} href={`${menuItem.slug.toLocaleLowerCase()}`}>
               {menuItem.name}
             </Link>
